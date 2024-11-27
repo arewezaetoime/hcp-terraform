@@ -1,0 +1,12 @@
+terraform.tfvars
+/.terraform
+
+# Ignore Terraform state files and configurations
+*.tfstate
+*.tfstate.backup
+
+# Ignore the .terraform directory and all its contents
+.terraform/
+
+# Ignore Terraform lock file (optional, recommended to commit in most cases)
+.terraform.lock.hcl
