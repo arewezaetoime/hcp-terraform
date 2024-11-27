@@ -1,5 +1,5 @@
 terraform.tfvars
-/.terraform
+/.terraform*
 
 # Ignore Terraform state files and configurations
 *.tfstate
@@ -10,3 +10,7 @@ terraform.tfvars
 
 # Ignore Terraform lock file (optional, recommended to commit in most cases)
 .terraform.lock.hcl
+
+# Ignore HashiCorp providers in the Terraform providers directory
+.terraform/providers/registry.terraform.io/hashicorp/
+
