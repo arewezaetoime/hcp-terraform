@@ -31,7 +31,7 @@ resource "tfe_project" "interview-task-project" {
 }
 
 resource "tfe_workspace" "parent-vcs" {
-  name                 = "vcs-ws"
+  name                 = "parent-vcs-ws"
   organization         = var.organization_name
   project_id           = tfe_project.interview-task-project.id
   vcs_repo {
