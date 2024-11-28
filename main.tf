@@ -67,7 +67,7 @@ resource "tfe_variable" "tfe_token_terraform" {
   key             = "tfe_token_variable"
   value           = var.tfe_token
   category        = "terraform"
-  description     = "Variable set applied to all worksspaces with the tfe token."
+  description     = "Variable set applied to all workspaces with the tfe token."
   variable_set_id = tfe_variable_set.test.id
 }
 
