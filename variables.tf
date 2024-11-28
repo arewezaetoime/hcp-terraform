@@ -15,8 +15,8 @@ variable "organization_name" {
   sensitive = false
 }
 
-variable "github_organization_name" {
-  description = "Organization name"
-  type = string
-  sensitive = false
-}
+# variable "github_organization_name" {
+#   description = "Organization name"
+#   type = string
+#   sensitive = false
+# }
