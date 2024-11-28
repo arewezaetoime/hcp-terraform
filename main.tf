@@ -9,7 +9,7 @@ terraform {
     organization = "The-Funky-Terraformers"
 
     workspaces {
-      name = "vcs-parent"
+      prefix = "parent-"
     }
   }
 }
@@ -30,7 +30,7 @@ resource "tfe_project" "interview-task-project" {
   name = "interview-task-project"
 }
 
-resource "tfe_workspace" "vcs-parent" {
+resource "tfe_workspace" "parent-vcs" {
   name                 = "vcs-ws"
   organization         = var.organization_name
   project_id           = tfe_project.interview-task-project.id
