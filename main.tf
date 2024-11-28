@@ -22,23 +22,23 @@ resource "tfe_project" "interview-task-project" {
   name = "interview-task-project"
 }
 
-resource "tfe_oauth_client" "github_oauth_client" {
-  organization      = var.github_organization_name
-  api_url           = "https://api.github.com"
-  http_url          = "https://github.com/arewezaetoime/hcp-terraform"
-  service_provider  = "github"
-  oauth_token_id    = var.oauth_token_id # Pass the token as a variable
-}
-
 resource "tfe_workspace" "vcs-parent" {
   name                 = "vcs-ws"
   organization         = tfe_organization.the-funky-terraformers.name
-  queue_all_runs       = false
+  project_id           = tfe_project.interview-task-project.id
   vcs_repo {
     branch             = "main"
-    identifier         = "the-funky-terraformers/vcs-repository"
-    oauth_token_id     = var.oauth_token_id
+    identifier         = "the-funky-terraformers/hcp-terraform-vcs-repo"
+    oauth_token_id     = tfe_oauth_client.github_oauth_client.oauth_token_id
   }
+}
+
+resource "tfe_oauth_client" "github_oauth_client" {
+  organization      = var.organization_name
+  api_url           = "https://api.github.com"
+  http_url          = "https://github.com"
+  oauth_token = var.oauth_token_id
+  service_provider  = "github"
 }
 
 resource "tfe_workspace" "parent" {
