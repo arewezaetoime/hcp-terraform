@@ -56,14 +56,14 @@ resource "tfe_workspace" "parent" {
   project_id = tfe_project.interview-task-project.id
 }
 
-resource "tfe_variable_set" "test" {
-  name         = "Global Varset"
+resource "tfe_variable_set" "tfe_token_varset" {
+  name         = "tfe_token_global_varset"
   description  = "Variable set applied to all workspaces."
   global       = true
   organization = var.organization_name
 }
 
-resource "tfe_variable" "tfe_token_var" {
+resource "tfe_variable" "tfe_token_terraform" {
   key             = "tfe_token_variable"
   value           = var.tfe_token
   category        = "terraform"
@@ -71,9 +71,9 @@ resource "tfe_variable" "tfe_token_var" {
   variable_set_id = tfe_variable_set.test.id
 }
 
-resource "tfe_variable" "organization_name_variable" {
-  key             = "organizarion_name_variable"
-  value           = var.organization_name
+resource "tfe_variable" "tfe_token_env" {
+  key             = "tfe_token_env"
+  value           = var.tfe_token
   category        = "env"
   description     = "an environment variable"
   variable_set_id = tfe_variable_set.test.id
