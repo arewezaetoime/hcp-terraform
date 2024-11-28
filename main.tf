@@ -4,6 +4,14 @@ terraform {
       version = "~> 0.60.1"
     }
   }
+  backend "remote" {
+    hostname     = "app.terraform.io"
+    organization = "The-Funky-Terraformers"
+
+    workspaces {
+      name = "vcs-parent"
+    }
+  }
 }
 
 provider "tfe" {
