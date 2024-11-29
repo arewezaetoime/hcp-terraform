@@ -22,10 +22,25 @@ resource "tfe_project" "interview-task-project" {
   name         = "interview-task-project"
 }
 
-resource "tfe_workspace" "parent-vcs" {
-  name                 = "parent-vcs-ws"
-  organization         = var.organization_name
-  project_id           = tfe_project.interview-task-project.id
+resource "tfe_oauth_client" "github_oauth_client" {
+  name             = var.github_oauth_client_name
+  organization     = var.organization_name
+  api_url          = "https://api.github.com"
+  http_url         = "https://github.com"
+  oauth_token      = var.github_oauth_token_id
+  service_provider = "github"
+  organization_scoped = true
+}
+
+output "oauth_token_id" {
+  value = tfe_oauth_client.github_oauth_client.oauth_token_id
+}
+
+resource "tfe_workspace" "vcs-ws" {
+  name         = "vcs-ws"
+  organization = var.organization_name
+  project_id   = tfe_project.interview-task-project.id
+  queue_all_runs = true
   vcs_repo {
     branch         = var.branch_name
     identifier     = "arewezaetoime/hcp-terraform"
