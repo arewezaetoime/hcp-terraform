@@ -12,38 +12,29 @@ provider "tfe" {
   organization = var.organization_name
 }
 
-resource "tfe_organization" "the-funky-terraformers" {
-  name  = "interview-task-project"
-  email = "hristoiliev.1994@gmail.com"
-}
-
 resource "tfe_project" "interview-task-project" {
   organization = var.organization_name
-  name         = "interview-task-project"
+  name         = var.project_name
 }
 
 resource "tfe_oauth_client" "github_oauth_client" {
-  name             = var.github_oauth_client_name
-  organization     = var.organization_name
-  api_url          = "https://api.github.com"
-  http_url         = "https://github.com"
-  oauth_token      = var.github_oauth_token_id
-  service_provider = "github"
+  name                = var.github_oauth_client_name
+  organization        = var.organization_name
+  api_url             = "https://api.github.com"
+  http_url            = "https://github.com"
+  oauth_token         = var.github_oauth_token_id
+  service_provider    = "github"
   organization_scoped = true
 }
 
-output "oauth_token_id" {
-  value = tfe_oauth_client.github_oauth_client.oauth_token_id
-}
-
 resource "tfe_workspace" "vcs-ws" {
-  name         = "vcs-ws"
-  organization = var.organization_name
-  project_id   = tfe_project.interview-task-project.id
+  name           = var.vcs_repository_name
+  organization   = var.organization_name
+  project_id     = tfe_project.interview-task-project.id
   queue_all_runs = true
   vcs_repo {
     branch         = var.branch_name
-    identifier     = "arewezaetoime/hcp-terraform"
+    identifier     = var.repo_identifier
     oauth_token_id = tfe_oauth_client.github_oauth_client.oauth_token_id
   }
 }
@@ -55,13 +46,39 @@ resource "tfe_workspace" "cli_workspaces" {
   project_id   = tfe_project.interview-task-project.id
 }
 
-# data "tfe_variable_set" "sensitive_variables" {
-#   name         = "sensitive_variables" 
-#   organization = var.organization_name
-# }
+resource "tfe_variable_set" "varset" {
+  name         = "Global Varset"
+  description  = "Variable set applied to all workspaces."
+  global       = false
+  organization = var.organization_name
+}
 
-# resource "tfe_workspace_variable_set" "attach_varset_to_workspaces" {
-#   for_each        = toset(tfe_workspace.parent[*].id)
-#   variable_set_id = data.tfe_variable_set.sensitive_variables.id
-#   workspace_id    = each.value
-# }
+resource "tfe_variable" "org_name_terraform_var" {
+  key             = "organization_name_hcp_variable"
+  value           = "The-Funky-Terraformers"
+  category        = "terraform"
+  description     = "This variable is containing the name of out organization"
+  variable_set_id = tfe_variable_set.varset.id
+}
+
+resource "tfe_variable" "org_name_env_var" {
+  key             = "organization_name_hcp_env_var"
+  value           = "The-Funky-Terraformers"
+  category        = "env"
+  description     = "an environment variable"
+  variable_set_id = tfe_variable_set.varset.id
+}
+
+data "tfe_variable_set" "varset_data" {
+  name         = tfe_variable_set.varset.name
+  organization = tfe_variable_set.varset.organization
+}
+
+resource "tfe_workspace_variable_set" "attach_varset_to_cli_workspaces" {
+  for_each = {
+    for i, workspace in tfe_workspace.cli_workspaces : workspace.name => workspace.id
+  }
+
+  workspace_id    = each.value
+  variable_set_id = data.tfe_variable_set.varset_data.id
+}
